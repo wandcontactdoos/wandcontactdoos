@@ -1,10 +1,12 @@
-name: markscribe
+name: Update README with Markscribe + WakaTime
 
 on:
   push:
-  workflow_dispatch:
+    branches:
+      - main
   schedule:
-    - cron: "0 */1 * * *"  # Every hour
+    - cron: "0 */6 * * *"  # every 6 hours (adjust as you want)
+  workflow_dispatch:
 
 jobs:
   markscribe:
@@ -12,29 +14,31 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
-      - name: Install Go
+      - name: Set up Go
         uses: actions/setup-go@v4
         with:
-          go-version: '1.21'  # or latest stable
+          go-version: "1.21"
 
-      - name: Clone markscribe fork
+      - name: Clone TaciturnAxolotl markscribe fork
         run: git clone https://github.com/TaciturnAxolotl/markscribe.git
 
       - name: Build markscribe
         run: |
           cd markscribe
-          go build -o markscribe .
+          go build -o ../markscribe-bin .
 
-      - name: Generate README with markscribe fork
+      - name: Generate README using markscribe
         env:
           GITHUB_TOKEN: ${{ secrets.GH_PAT }}
           WAKATIME_API_KEY: ${{ secrets.WAKATIME_API_KEY }}
         run: |
-          ./markscribe/markscribe -entry ../README.gtpl -write README.md
+          ./markscribe-bin -entry README.gtpl -write README.md
 
-      - name: Commit README
+      - name: Commit and push README.md changes
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
-          commit_message: 'markscribe: update README.md'
+          commit_message: "markscribe: update README.md"
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
