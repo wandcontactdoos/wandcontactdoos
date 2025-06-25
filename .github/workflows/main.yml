@@ -4,7 +4,7 @@ on:
   push:
   workflow_dispatch:
   schedule:
-    - cron: "0 */1 * * *"  # every hour
+    - cron: "0 */1 * * *"  # Every hour
 
 jobs:
   markscribe:
@@ -14,15 +14,14 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Generate README with WakaTime
+      - name: Generate README
         uses: muesli/readme-scribe@master
         env:
           GITHUB_TOKEN: ${{ secrets.GH_PAT }}
-          WAKATIME_API_KEY: ${{ secrets.WAKATIME_API_KEY }}
+          WAKATIME_API_KEY: ${{ secrets.WAKATIME_API_KEY }}  # ✅ Required
         with:
           template: 'README.gtpl'
           writeTo: 'README.md'
-          wakaTimeUsername: your-wakatime-username
 
       - name: Commit README
         uses: stefanzweifel/git-auto-commit-action@v4
