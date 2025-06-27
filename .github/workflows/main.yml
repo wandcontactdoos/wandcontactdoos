@@ -15,10 +15,14 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
       - name: Generate README
         uses: muesli/readme-scribe@master
         env:
-
+          GITHUB_TOKEN: ${{ secrets.GH_PAT }}
+          WAKATIME_API_KEY: ${{ secrets.WAKATIME_API_KEY }}
         with:
           template: 'README.gtpl'
           writeTo: 'README.md'
